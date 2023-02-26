@@ -16,7 +16,7 @@ public class app{
         String topic=new String();
         topic=sc.nextLine();
         
-        PreparedStatement state=con.prepareStatement("insert into subject1 values(?,?,?)");
+        PreparedStatement state=con.prepareStatement("insert into subject1 values(?,?,?,0)");
         System.out.println("statement prepared");
         state.setString(1,topic);
         System.out.println("num1 set");
