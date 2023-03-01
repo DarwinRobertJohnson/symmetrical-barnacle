@@ -42,6 +42,29 @@ public class app{
         return next_rev_date;
     }
 
+    public static void showTopics() throws Exception{
+        Class.forName("org.sqlite.JDBC");
+        Connection con=DriverManager.getConnection("jdbc:sqlite:databaseFiles/revision");
+        Statement stm=con.createStatement();
+        ResultSet rs=stm.executeQuery("select * from subject1");
+        String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        PreparedStatement ps=con.prepareStatement("update subject1 set next_revision_date=?,num_rev=? where topic=?");
+        while(rs.next()){
+            if(date.equals(rs.getString("next_revision_date"))){
+                System.out.println(rs.getString("topic"));
+                int num_revision=rs.getInt("num_rev")+1;
+                String next_revision_date=revisionDate(rs.getString("next_revision_date"),num_revision);
+                ps.setString(1, next_revision_date);
+                ps.setInt(2, num_revision);
+                ps.setString(3, rs.getString("topic"));
+                ps.executeUpdate();
+            }
+        }
+        stm.close();
+        con.close();
+
+    }
+
     public static void addEntry() throws Exception{
         Class.forName("org.sqlite.JDBC");
         Connection con=DriverManager.getConnection("jdbc:sqlite:databaseFiles/revision");
@@ -73,7 +96,8 @@ public class app{
     }
 
     public static void main(String[] args) throws Exception{
-        addEntry();
+        //addEntry();
+        showTopics();
         //System.out.println(revisionDate("28-02-2023",0));
     }
 }
