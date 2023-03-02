@@ -48,18 +48,25 @@ public class app{
         Statement stm=con.createStatement();
         ResultSet rs=stm.executeQuery("select * from subject1");
         String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        int num_revision;
         PreparedStatement ps=con.prepareStatement("update subject1 set next_revision_date=?,num_rev=? where topic=?");
+        PreparedStatement ps2=con.prepareStatement("delete from subject1 where topic=?");
         while(rs.next()){
             if(date.equals(rs.getString("next_revision_date"))){
+                num_revision=rs.getInt("num_rev");
+                if(num_revision<5){
                 System.out.println(rs.getString("topic"));
-                int num_revision=rs.getInt("num_rev")+1;
+                num_revision++;
                 String next_revision_date=revisionDate(rs.getString("next_revision_date"),num_revision);
                 ps.setString(1, next_revision_date);
                 ps.setInt(2, num_revision);
                 ps.setString(3, rs.getString("topic"));
                 ps.executeUpdate();
             }
+            }
         }
+        ps2.close();
+        ps.close();
         stm.close();
         con.close();
 
